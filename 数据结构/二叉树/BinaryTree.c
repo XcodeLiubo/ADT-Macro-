@@ -189,7 +189,14 @@ void traverse_first(BinaryTree* tree,TraverseCallFun callbackFun,TraverseStd* tr
     while (tree || !Mystack_empty(stack)) {
 
         ///相当于第一次碰到 节点, 立即访问
-        if (tree && callbackFun && callbackFun && traverse_ing_work(traverseData, tree, callbackFun))break;
+        if (tree && callbackFun && callbackFun && traverse_ing_work(traverseData, tree, callbackFun)){
+            ///释放内存(把已经压栈的释放掉)
+            while (!Mystack_empty(stack)) {
+                Mystack_pop(stack, NULL);
+            }
+
+            break;
+        }
 
 #if 0  ////针对于先序遍历的时候, 优化一下, 如果有右子树,再压栈(减少栈的空间)
 
@@ -254,7 +261,13 @@ void traverse_middle(BinaryTree* tree,TraverseCallFun callbackFun,TraverseStd* t
         tmpBt = Mystack_top(stack);
 
         ///相当于第2次碰到 节点, 访问
-        if (*tmpBt && callbackFun && callbackFun && traverse_ing_work(traverseData, *tmpBt, callbackFun))break;
+        if (*tmpBt && callbackFun && callbackFun && traverse_ing_work(traverseData, *tmpBt, callbackFun)){
+            ///释放内存(把已经压栈的释放掉)
+            while (!Mystack_empty(stack)) {
+                Mystack_pop(stack, NULL);
+            }
+            break;
+        }
 
         tree = (*tmpBt)->right;
 
@@ -319,7 +332,13 @@ void traverse_last(BinaryTree* tree,TraverseCallFun callbackFun,TraverseStd* tra
                 tmpBt = T_Laststack_top(stack);
                 if ((*tmpBt)->node && callbackFun && callbackFun){
                     traverseData->_std_basic.n_heigth = tmpFlag;
-                    if(traverse_ing_work(traverseData, (*tmpBt)->node, callbackFun))break;
+                    if(traverse_ing_work(traverseData, (*tmpBt)->node, callbackFun)){
+                        ///释放内存(把已经压栈的释放掉)
+                        while (!T_Laststack_empty(stack)) {
+                            T_Laststack_pop(stack, NULL);
+                        }
+                        break;
+                    }
                 }
                 T_Laststack_pop(stack, NULL);
 
@@ -351,8 +370,15 @@ void traverse_level(BinaryTree* tree,TraverseCallFun callbackFun,TraverseStd* tr
         tmp = BinaryTreequeue_del(Q, NULL);
 
         ////访问
-        if (callbackFun && callbackFun(traverseData))break;
-
+        if (callbackFun && callbackFun(traverseData)){
+            while (!BinaryTreequeue_empty(Q)) {
+                BinaryTree** delNode = BinaryTreequeue_del(Q, NULL);
+                if (delNode) {
+                    alloc_recycle_mem(sizeof(sizeof(BinaryTree*)), delNode);
+                }
+            }
+            break;
+        }
 
         if ((*tmp)->left)BinaryTreequeue_add(Q, (*tmp)->left, NULL);
         if ((*tmp)->right)BinaryTreequeue_add(Q, (*tmp)->right, NULL);

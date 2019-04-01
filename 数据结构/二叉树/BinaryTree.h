@@ -95,7 +95,7 @@ typedef void*  TraverseCallFun(TraverseStd*);
 /** 二叉树的遍历 */
 extern void traverse_binaryT(BinaryTreeRoot* root,TraverseBTType type,TraverseCallFun callbackFun);
 
-/** 获取二叉树每个结点在哪一层*/
+/** 获取二叉树每个结点在哪一层(回调TraverseCallFun里) 返回结果是二叉树的高度*/
 extern unsigned long tree_height(BinaryTreeRoot*,TraverseCallFun);
 
 

@@ -132,7 +132,7 @@ void traverse_binaryT(BinaryTreeRoot* root,TraverseBTType type,TraverseCallFun c
         tmpTraverseData = traversestd_create(type, callbackFun);
 
     ///堆栈遍历或层次遍历
-    if (traverse_recursion_condition(root)) {
+    if (!traverse_recursion_condition(root)) {
         switch (type) {
             case TraverseBTType_first:  {   traverse_first(root->root, callbackFun,tmpTraverseData);}break;
             case TraverseBTType_middle: {   traverse_middle(root->root, callbackFun,tmpTraverseData);}break;
